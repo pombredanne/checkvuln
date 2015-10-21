@@ -1,0 +1,3 @@
+include setup.cfg
+global-include *.py README.rst LICENSE NOTICE
+recursive-include test *.xml *.sql

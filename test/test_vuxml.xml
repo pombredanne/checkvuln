@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE vuxml PUBLIC "-//vuxml.org//DTD VuXML 1.1//EN" "http://www.vuxml.org/dtd/vuxml-1/vuxml-11.dtd">
+<!--
+Copyright 2003-2014 Jacques Vidrine and contributors
+
+Redistribution and use in source (VuXML) and 'compiled' forms (SGML,
+HTML, PDF, PostScript, RTF and so forth) with or without modification,
+are permitted provided that the following conditions are met:
+1. Redistributions of source code (VuXML) must retain the above
+   copyright notice, this list of conditions and the following
+   disclaimer as the first lines of this file unmodified.
+2. Redistributions in compiled form (transformed to other DTDs,
+   published online in any format, converted to PDF, PostScript,
+   RTF and other formats) must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer
+   in the documentation and/or other materials provided with the
+   distribution.
+
+THIS DOCUMENTATION IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<vuxml xmlns="http://www.vuxml.org/apps/vuxml-1">
+  <vuln vid="dc8c08c7-1e7c-11db-88cf-000c6ec775d9">
+    <topic>apache -- mod_rewrite buffer overflow vulnerability</topic>
+    <affects>
+      <package>
+	    <name>apache</name>
+	    <range><ge>1.3.28</ge><lt>1.3.36_1</lt></range>
+	    <range><ge>2.0.46</ge><lt>2.0.58_2</lt></range>
+	    <range><ge>2.2.0</ge><lt>2.2.2_1</lt></range>
+      </package>
+      <package>
+	    <name>apache+mod_perl</name>
+	    <range><ge>1.3.28</ge><lt>1.3.36_1</lt></range>
+      </package>
+      <package>
+	    <name>apache+ipv6</name>
+	    <range><ge>1.3.28</ge><lt>1.3.37</lt></range>
+      </package>
+      <package>
+	    <name>apache_fp</name>
+	    <range><ge>0</ge></range>
+      </package>
+      <package>
+	    <name>ru-apache</name>
+	    <range><ge>1.3.28</ge><lt>1.3.37+30.23</lt></range>
+      </package>
+      <package>
+	    <name>ru-apache+mod_ssl</name>
+	    <range><ge>1.3.28</ge><lt>1.3.34.1.57_2</lt></range>
+      </package>
+      <package>
+	    <name>apache+ssl</name>
+	    <range><ge>1.3.28</ge><lt>1.3.34.1.57_2</lt></range>
+      </package>
+      <package>
+	    <name>apache+mod_ssl</name>
+	    <name>apache+mod_ssl+ipv6</name>
+	    <name>apache+mod_ssl+mod_accel</name>
+	    <name>apache+mod_ssl+mod_accel+ipv6</name>
+	    <name>apache+mod_ssl+mod_accel+mod_deflate</name>
+	    <name>apache+mod_ssl+mod_accel+mod_deflate+ipv6</name>
+	    <name>apache+mod_ssl+mod_deflate</name>
+	    <name>apache+mod_ssl+mod_deflate+ipv6</name>
+	    <name>apache+mod_ssl+mod_snmp</name>
+	    <name>apache+mod_ssl+mod_snmp+mod_accel</name>
+	    <name>apache+mod_ssl+mod_snmp+mod_accel+ipv6</name>
+	    <name>apache+mod_ssl+mod_snmp+mod_deflate</name>
+	    <name>apache+mod_ssl+mod_snmp+mod_deflate+ipv6</name>
+	    <name>apache+mod_ssl+mod_snmp+mod_accel+mod_deflate+ipv6</name>
+	    <range><ge>1.3.28</ge><lt>1.3.36+2.8.27_1</lt></range>
+        <range><ge>9.3.28</ge><lt>9.3.36+2.8.27_1</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>The Apache Software Foundation and The Apache HTTP Server
+	    Project reports:</p>
+	    <blockquote cite="http://marc.theaimsgroup.com/?l=apache-httpd-announce&amp;m=115409818602955">
+	      <p>An off-by-one flaw exists in the Rewrite module,
+	      mod_rewrite, as shipped with Apache 1.3 since 1.3.28, 2.0
+	      since 2.0.46, and 2.2 since 2.2.0.</p>
+	      <p>Depending on the manner in which Apache HTTP Server was
+	      compiled, this software defect may result in a
+	      vulnerability which, in combination with certain types of
+	      Rewrite rules in the web server configuration files, could
+	      be triggered remotely. For vulnerable builds, the nature
+	      of the vulnerability can be denial of service (crashing of
+	      web server processes) or potentially allow arbitrary code
+	      execution. This issue has been rated as having important
+	      security impact by the Apache HTTP Server Security Team.</p>
+	      <p>This flaw does not affect a default installation of
+	      Apache HTTP Server.  Users who do not use, or have not
+	      enabled, the Rewrite module mod_rewrite are not affected
+	      by this issue. This issue only affects installations using
+	      a Rewrite rule with the following characteristics:</p>
+	      <ul>
+	        <li>The RewriteRule allows the attacker to control the
+	        initial part of the rewritten URL (for example if the
+	        substitution URL starts with $1)</li>
+	        <li>The RewriteRule flags do NOT include any of the
+	        following flags: Forbidden (F), Gone (G), or NoEscape
+	        (NE).</li>
+	      </ul>
+	      <p>Please note that ability to exploit this issue is
+	      dependent on the stack layout for a particular compiled
+	      version of mod_rewrite. If the compiler used to compile
+	      Apache HTTP Server has added padding to the stack
+	      immediately after the buffer being overwritten, it will
+	      not be possible to exploit this issue, and Apache HTTP
+	      Server will continue operating normally.</p>
+	      <p>The Apache HTTP Server project thanks Mark Dowd of McAfee
+	      Avert Labs for the responsible reporting of this
+	      vulnerability.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <certvu>395412</certvu>
+      <cvename>CVE-2006-3747</cvename>
+      <mlist msgid="44CA22D9.6020200@apache.org">http://marc.theaimsgroup.com/?l=apache-httpd-announce&amp;m=115409818602955</mlist>
+    </references>
+    <dates>
+      <discovery>2006-07-27</discovery>
+      <entry>2006-07-28</entry>
+      <modified>2006-11-01</modified>
+    </dates>
+  </vuln>
+
+  <vuln vid="0e425bb7-64f2-11e5-b2fd-00262d5ed8ee">
+    <topic>chromium -- multiple vulnerabilities</topic>
+    <affects>
+      <package>
+	    <name>chromium</name>
+	    <range><lt>45.0.2454.101</lt></range>
+      </package>
+      <package>
+	    <!-- pcbsd -->
+	    <name>chromium-npapi</name>
+	    <range><lt>45.0.2454.101</lt></range>
+      </package>
+      <package>
+	    <!-- pcbsd -->
+	    <name>chromium-pulse</name>
+	    <range><lt>45.0.2454.101</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>Google Chrome Releases reports:</p>
+	    <blockquote cite="http://googlechromereleases.blogspot.nl/2015/09/stable-channel-update_24.html">
+	      <p>Two vulnerabilities were fixed in this release:</p>
+	      <ul>
+	        <li>[530301] High CVE-2015-1303: Cross-origin bypass in DOM. Credit
+	        to Mariusz Mlynski.</li>
+	        <li>[531891] High CVE-2015-1304: Cross-origin bypass in V8. Credit
+	        to Mariusz Mlynski.</li>
+	      </ul>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <cvename>CVE-2015-1303</cvename>
+      <cvename>CVE-2015-1304</cvename>
+      <url>http://googlechromereleases.blogspot.nl/2015/09/stable-channel-update_24.html</url>
+    </references>
+    <dates>
+      <discovery>2015-09-24</discovery>
+      <entry>2015-09-27</entry>
+    </dates>
+  </vuln>
+
+  <vuln vid="1e7f0c11-673a-11e5-98c8-60a44c524f57">
+    <topic>otrs -- Scheduler Process ID File Access</topic>
+    <affects>
+      <package>
+	    <name>otrs</name>
+	    <range><gt>3.2.*</gt><lt>3.2.18</lt></range>
+	    <range><gt>3.3.*</gt><lt>3.3.15</lt></range>
+	    <range><gt>4.0.*</gt><lt>4.0.13</lt></range>
+        <range><eq>5.0</eq></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>The OTRS project reports:</p>
+	    <blockquote cite="https://www.otrs.com/security-advisory-2015-02-scheduler-process-id-file-access/">
+	      <p>An attacker with valid LOCAL credentials could access and
+	      manipulate the process ID file for bin/otrs.schduler.pl from the
+	      CLI.</p>
+	      <p>The Proc::Daemon module 0.14 for Perl uses world-writable
+	      permissions for a file that stores a process ID, which allows local
+	      users to have an unspecified impact by modifying this file.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <url>https://www.otrs.com/security-advisory-2015-02-scheduler-process-id-file-access/</url>
+      <cvename>CVE-2015-6842</cvename>
+      <cvename>CVE-2013-7135</cvename>
+    </references>
+    <dates>
+      <discovery>2015-09-17</discovery>
+      <entry>2015-09-30</entry>
+    </dates>
+  </vuln>
+
+  <vuln vid="1e7f0c11-673a-11e5-98c8-60a44c524f59">
+    <topic>otrs -- Scheduler Process ID File Access</topic>
+    <affects>
+      <package>
+	    <name>otrs</name>
+	    <range><gt>4.0.*</gt><lt>4.0.13</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <blockquote>
+          blargh
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <url>meh</url>
+    </references>
+  </vuln>
+
+  <vuln vid="9c7177ff-1fe1-11e5-9a01-bcaec565249c">
+    <topic>libxml2 -- Enforce the reader to run in constant memory</topic>
+    <affects>
+      <package>
+	    <name>libxml2</name>
+	    <range><lt>2.9.2_3</lt></range>
+      </package>
+      <package>
+	    <name>linux-c6-libxml2</name>
+	    <range><ge>*</ge></range>
+      </package>
+      <package>
+	    <name>linux-f10-libxml2</name>
+	    <range><ge>*</ge></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>Daniel Veilland reports:</p>
+	    <blockquote cite="https://git.gnome.org/browse/libxml2/commit/?id=213f1fe0d76d30eaed6e5853057defc43e6df2c9">
+	      <p>Enforce the reader to run in constant memory. One of the
+	      operation on the reader could resolve entities leading to
+	      the classic expansion issue. Make sure the buffer used for
+	      xmlreader operation is bounded. Introduce a new allocation
+	      type for the buffers for this effect.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <cvename>CVE-2015-1819</cvename>
+      <url>https://git.gnome.org/browse/libxml2/commit/?id=213f1fe0d76d30eaed6e5853057defc43e6df2c9</url>
+    </references>
+    <dates>
+      <discovery>2015-04-14</discovery>
+      <entry>2015-07-01</entry>
+      <modified>2015-07-15</modified>
+    </dates>
+  </vuln>
+
+  <vuln vid="8305e215-1080-11e5-8ba2-000c2980a9f3">
+    <topic>openssl -- multiple vulnerabilities</topic>
+    <affects>
+      <package>
+	    <name>openssl</name>
+	    <range><lt>1.0.2_2</lt></range>
+      </package>
+      <package>
+	    <name>mingw32-openssl</name>
+	    <range><ge>1.0.1</ge><lt>1.0.2b</lt></range>
+      </package>
+      <package>
+	    <name>linux-c6-openssl</name>
+	    <range><lt>1.0.1e_6</lt></range>
+      </package>
+      <package>
+	    <name>libressl</name>
+	    <range><lt>2.1.7</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>The OpenSSL team reports:</p>
+	    <blockquote cite="https://www.openssl.org/news/secadv_20150611.txt">
+	      <ul>
+	        <li>Missing DHE man-in-the-middle protection (Logjam)
+	        (CVE-2015-4000)</li>
+	        <li>Malformed ECParameters causes infinite loop (CVE-2015-1788)</li>
+	        <li>Exploitable out-of-bounds read in X509_cmp_time
+	        (CVE-2015-1789)</li>
+	        <li>iPKCS7 crash with missing EnvelopedContent (CVE-2015-1790)</li>
+	        <li>CMS verify infinite loop with unknown hash function
+	        (CVE-2015-1792)</li>
+	        <li>Race condition handling NewSessionTicket (CVE-2015-1791)</li>
+	        <li>Invalid free in DTLS (CVE-2014-8176)</li>
+	      </ul>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <cvename>CVE-2014-8176</cvename>
+      <cvename>CVE-2015-1788</cvename>
+      <cvename>CVE-2015-1789</cvename>
+      <cvename>CVE-2015-1790</cvename>
+      <cvename>CVE-2015-1791</cvename>
+      <cvename>CVE-2015-1792</cvename>
+      <url>https://www.openssl.org/news/secadv_20150611.txt</url>
+    </references>
+    <dates>
+      <discovery>2015-06-11</discovery>
+      <entry>2015-06-11</entry>
+      <modified>2015-07-03</modified>
+    </dates>
+  </vuln>
+
+  <vuln vid="dec3164f-3121-45ef-af18-bb113ac5082f">
+    <topic>sqlite -- multiple vulnerabilities</topic>
+    <affects>
+      <package>
+	    <name>sqlite3</name>
+	    <range><lt>3.8.9</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>NVD reports:</p>
+	    <blockquote cite="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-3414">
+	      <p>SQLite before 3.8.9 does not properly implement the
+	      dequoting of collation-sequence names, which allows
+	      context-dependent attackers to cause a denial of service
+	      (uninitialized memory access and application crash) or
+	      possibly have unspecified other impact via a crafted
+	      COLLATE clause, as demonstrated by COLLATE"""""""" at the
+	      end of a SELECT statement.</p>
+	    </blockquote>
+	    <blockquote cite="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-3415">
+	      <p>The sqlite3VdbeExec function in vdbe.c in SQLite before
+	      3.8.9 does not properly implement comparison operators,
+	      which allows context-dependent attackers to cause a denial
+	      of service (invalid free operation) or possibly have
+	      unspecified other impact via a crafted CHECK clause, as
+	      demonstrated by CHECK(0&amp;O&gt;O) in a CREATE TABLE statement.
+	      </p>
+	    </blockquote>
+	    <blockquote cite="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-3416">
+	      <p>The sqlite3VXPrintf function in printf.c in SQLite before
+	      3.8.9 does not properly handle precision and width values
+	      during floating-point conversions, which allows
+	      context-dependent attackers to cause a denial of service
+	      (integer overflow and stack-based buffer overflow) or
+	      possibly have unspecified other impact via large integers
+	      in a crafted printf function call in a SELECT statement.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <cvename>CVE-2015-3414</cvename>
+      <cvename>CVE-2015-3415</cvename>
+      <cvename>CVE-2015-3416</cvename>
+      <url>https://www.sqlite.org/src/info/eddc05e7bb31fae7</url>
+      <url>https://www.sqlite.org/src/info/02e3c88fbf6abdcf</url>
+      <url>https://www.sqlite.org/src/info/c494171f77dc2e5e</url>
+      <mlist>http://seclists.org/fulldisclosure/2015/Apr/31</mlist>
+    </references>
+    <dates>
+      <discovery>2015-04-14</discovery>
+      <entry>2015-04-18</entry>
+      <modified>2015-05-08</modified>
+    </dates>
+  </vuln>
+
+  <vuln vid="23ab5c3e-79c3-11e4-8b1e-d050992ecde8">
+    <topic>OpenVPN -- denial of service security vulnerability</topic>
+    <affects>
+      <package>
+	    <name>openvpn</name>
+	    <range><lt>2.0.11</lt></range>
+	    <range><ge>2.1.0</ge><lt>2.2.3</lt></range>
+	    <range><ge>2.3.0</ge><lt>2.3.6</lt></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>The OpenVPN project reports:</p>
+	    <blockquote cite="https://community.openvpn.net/openvpn/wiki/SecurityAnnouncement-97597e732b">
+	      <p>In late November 2014 Dragana Damjanovic notified OpenVPN
+	      developers of a critical denial of service security vulnerability
+	      (CVE-2014-8104). The vulnerability allows an tls-authenticated
+	      client to crash the server by sending a too-short control channel
+	      packet to the server.  In other words this vulnerability is denial
+	      of service only.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <cvename>CVE-2014-8104</cvename>
+      <url>https://community.openvpn.net/openvpn/wiki/SecurityAnnouncement-97597e732b</url>
+    </references>
+    <dates>
+      <discovery>2014-12-01</discovery>
+      <entry>2014-12-02</entry>
+    </dates>
+  </vuln>
+
+  <vuln vid="8e5e6d42-a0fa-11e3-b09a-080027f2d077">
+    <topic>Python -- buffer overflow in socket.recvfrom_into()</topic>
+    <affects>
+      <package>
+	    <name>python27</name>
+	    <range><le>2.7.6_3</le></range>
+      </package>
+      <package>
+	    <name>python31</name>
+	    <range><le>3.1.5_10</le></range>
+      </package>
+      <package>
+	    <name>python32</name>
+	    <range><le>3.2.5_7</le></range>
+      </package>
+      <package>
+	    <name>python33</name>
+	    <range><le>3.3.3_2</le></range>
+      </package>
+    </affects>
+    <description>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+	    <p>Vincent Danen via Red Hat Issue Tracker reports:</p>
+	    <blockquote cite="https://bugzilla.redhat.com/show_bug.cgi?id=1062370">
+	      <p>A vulnerability was reported in Python's socket module, due to a
+	      boundary error within the sock_recvfrom_into() function, which could be
+	      exploited to cause a buffer overflow.  This could be used to crash a
+	      Python application that uses the socket.recvfrom_info() function or,
+	      possibly, execute arbitrary code with the permissions of the user
+	      running vulnerable Python code.</p>
+
+	      <p>This vulnerable function, socket.recvfrom_into(), was introduced in
+	      Python 2.5.  Earlier versions are not affected by this flaw.</p>
+	    </blockquote>
+      </body>
+    </description>
+    <references>
+      <bid>65379</bid>
+      <cvename>CVE-2014-1912</cvename>
+      <mlist>https://mail.python.org/pipermail/python-dev/2014-February/132758.html</mlist>
+      <url>http://bugs.python.org/issue20246</url>
+      <url>https://bugzilla.redhat.com/show_bug.cgi?id=1062370</url>
+    </references>
+    <dates>
+      <discovery>2014-01-14</discovery>
+      <entry>2014-03-01</entry>
+    </dates>
+  </vuln>
+
+</vuxml>
